@@ -6,6 +6,21 @@ with open("results.json", 'r') as f:
 d1 = data["tests"][0]
 d2 = d1["tests"][0]
 d3 = d2["tests"][0]
+
+# to change the scenerio numbering from 1, 2...
+total_scenirio = d3["tests"]
+
+for i in range(len(total_scenirio)):
+    total_scenirio_dict = d3["tests"][i]
+    # change the steps numbering from 1,2..
+    total_steps = total_scenirio_dict['tests']
+    # print(total_steps)
+    for j in range(len(total_steps)):
+        # print(d3['tests'][i]['tests'][j]['lineNo'])
+        d3['tests'][i]['tests'][j]['lineNo'] = j+1
+    d3['tests'][i]['lineNo'] = i+1
+# print(d3)
+
 json_data = json.dumps(d3)
 html_syn = json2html.convert(json=json_data)
 content = ''
@@ -15,13 +30,6 @@ with open("multiplelevel_normalized_data1.html", 'w') as r:
 with open("multiplelevel_normalized_data1.html", 'r') as d:
     content += d.read()
 
-print(content)
-
-# data = content.split('<tr>')
-# for i in data:
-#     pass
-#
-# print(data)
 
 # manipulating table content
 new_content = content.replace('table border="1"', 'table class="table table-bordered" border="6px;"')
@@ -33,8 +41,19 @@ new_content = new_content.replace('<th style="background-color:	#00BFFF;">detail
 new_content = new_content.replace('<tr><th style="background-color:	#00BFFF;">lineNo</th><td>1</td></tr>', '')
 
 # for table toggling
-new_content = new_content.replace('<th style="background-color:	#00BFFF;">tests</th>', '<th style="background-color:	#00BFFF; cursor:pointer;" id="first">Tests [+]</th>', 1)
-new_content = new_content.replace('<th style="background-color:	#00BFFF;">tests</th>', '<th style="background-color:	#00BFFF;">Tests <a href="#">[+]</a></th>')
+new_content = new_content.replace('<th style="background-color:	#00BFFF;">tests</th>',
+                                  '<th style="background-color:	#00BFFF; cursor:pointer;" id="first">Tests [+]</th>', 1)
+new_content = new_content.replace('<th style="background-color:	#00BFFF;">tests</th>',
+                                  '<th style="background-color:	#00BFFF;">Tests <a href="#">[+]</a></th>')
+
+
+# to change the Line no to Scenerio no
+new_content = new_content.replace('<th style="background-color:	#00BFFF;">lineNo</th>',
+                                  '<th style="background-color:	#00BFFF;">ScenerioNo</th>', 1)
+# to change the Line no to Step no
+for i in range(len(total_scenirio)):
+    new_content = new_content.replace('<th style="background-color:	#00BFFF;">lineNo</th>',
+                                      '<th style="background-color:	#00BFFF;">StepNo</th>', i+2)
 
 # for capitalizing headers
 new_content = new_content.replace('<th style="background-color:	#00BFFF;">description</th>',
@@ -61,6 +80,7 @@ new_content = new_content.replace('<th style="background-color:	#00BFFF;">time</
 # removing uri from step level
 # new_content = new_content.replace('<th style="background-color:	#00BFFF;">Uri</th>',
 #                                   '', 3)
+# print(new_content)
 
 with open("multiplelevel_normalized_data1.html", 'w+') as t:
 
@@ -101,4 +121,7 @@ with open("multiplelevel_normalized_data1.html", 'w+') as t:
     '''
 
     t.write(html_head + "\n" + new_content + "\n" + "</body>" + "\n" + j_script + "\n" + "</html>")
+
+
+print("Report generation complete")
 
